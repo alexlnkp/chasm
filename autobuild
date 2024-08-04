@@ -3,6 +3,8 @@
 _TEST_FOLDER="test"
 _BIN_FOLDER="bin"
 
+mkdir -p ${_BIN_FOLDER}
+
 tests=("fstring" "hello")
 
 for str in ${tests[@]}; do

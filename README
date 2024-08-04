@@ -1,0 +1,12 @@
+A single-header library for use in situations where WHOLE stdio.h is simply unnecessary.
+Currently only works on linux due to heavy reliance on syscalls.
+
+TODO:
+- Make fstring() be able to print out float numbers
+- Make printf() function that also doesn't rely on vsnprintf() (or make an alternative to vsnprintf())
+- Attempt to get rid of `stdarg.h` dependency (might not be possible due to it possibly being a compiler hack)
+
+Currently working:
+- Printing to STDOUT
+- String length calculation using a custom str_len() function
+- String formatting using a custom `fprintf()` function, "fstring()"

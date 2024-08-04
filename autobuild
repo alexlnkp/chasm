@@ -1,0 +1,15 @@
+#!/bin/bash
+
+_TEST_FOLDER="test"
+_BIN_FOLDER="bin"
+
+tests=("fstring" "hello")
+
+for str in ${tests[@]}; do
+    gcc -s ${_TEST_FOLDER}/${str}.c -nostartfiles -O3 -I. -o ${_BIN_FOLDER}/${str}
+
+    # if flag -r is passed - also run the tests
+    if [[ $1 = "-r" ]]; then
+        ./bin/${str}
+    fi
+done

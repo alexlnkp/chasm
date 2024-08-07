@@ -8,7 +8,11 @@ mkdir -p ${_BIN_FOLDER}
 tests=("fstring" "hello")
 
 for str in ${tests[@]}; do
-    gcc -s ${_TEST_FOLDER}/${str}.c -nostartfiles -O3 -I. -o ${_BIN_FOLDER}/${str}
+    if [[ $1 = "-w32" ]]; then
+        gcc -s ${_TEST_FOLDER}/${str}.c -nostartfiles -O3 -D_WIN32 -I. -o ${_BIN_FOLDER}/${str}
+    else
+        gcc -s ${_TEST_FOLDER}/${str}.c -nostartfiles -O3 -I. -o ${_BIN_FOLDER}/${str}
+    fi
 
     # if flag -r is passed - also run the tests
     if [[ $1 = "-r" ]]; then

@@ -24,24 +24,43 @@ unsigned str_len(const char *str) {
 
 int s_print(const char* str, int len) {
     int ret;
+#ifdef _WIN32
+    __asm__ volatile (
+        "call WriteFile"
+        : "=a"(ret)
+        : "b"(str), "c"(len), "d"(STDOUT_FILENO)
+        :
+    );
+#else
     asm volatile (
         "syscall"
         : "=a"(ret)
         : "a"(SYS_write), "D"(STDOUT_FILENO), "S"(str), "d"(len)
         : "rcx", "r11", "memory"
     );
+#endif
     return ret;
 }
 
 int print(const char* str) {
     unsigned len = str_len(str);
     int ret;
+
+#ifdef _WIN32
+    __asm__ volatile (
+        "call WriteFile"
+        : "=a"(ret)
+        : "b"(str), "c"(len), "d"(STDOUT_FILENO)
+        :
+    );
+#else
     asm volatile (
         "syscall"
         : "=a"(ret)
         : "a"(SYS_write), "D"(STDOUT_FILENO), "S"(str), "d"(len)
         : "rcx", "r11", "memory"
     );
+#endif
     return ret;
 }
 
@@ -108,12 +127,22 @@ int fstring(char *str, const char *format, ...) {
 }
 
 void exit_program(int exit_code) {
+#ifdef _WIN32
+    __asm__ volatile (
+        "push %[exit_code]\n\t"
+        "call ExitProcess\n\t"
+        :
+        : [exit_code] "m" (exit_code)
+        : "memory"
+    );
+#else
     asm volatile(
         "syscall"
         :
         : "a"(SYS_exit), "D"(exit_code)
         : "rcx", "r11"
     );
+#endif
 }
 
 

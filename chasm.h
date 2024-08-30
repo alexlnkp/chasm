@@ -1,5 +1,5 @@
-#ifndef CHASM_H
-#define CHASM_H
+#ifndef __CHASM_H__
+#define __CHASM_H__
 
 /* Syscall codes */
 #define SYS_write 1
@@ -136,7 +136,7 @@ void exit_program(int exit_code) {
         : "memory"
     );
 #else
-    asm volatile(
+    asm volatile (
         "syscall"
         :
         : "a"(SYS_exit), "D"(exit_code)
@@ -147,4 +147,4 @@ void exit_program(int exit_code) {
 
 
 
-#endif // CHASM_H
+#endif // __CHASM_H__

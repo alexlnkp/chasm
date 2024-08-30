@@ -1,5 +1,5 @@
-#ifndef CHASM_H
-#define CHASM_H
+#ifndef __CHASM_H__
+#define __CHASM_H__
 
 /* Syscall codes */
 #define SYS_write 1
@@ -24,24 +24,43 @@ unsigned str_len(const char *str) {
 
 int s_print(const char* str, int len) {
     int ret;
+#ifdef _WIN32
+    __asm__ volatile (
+        "call WriteFile"
+        : "=a"(ret)
+        : "b"(str), "c"(len), "d"(STDOUT_FILENO)
+        :
+    );
+#else
     asm volatile (
         "syscall"
         : "=a"(ret)
         : "a"(SYS_write), "D"(STDOUT_FILENO), "S"(str), "d"(len)
         : "rcx", "r11", "memory"
     );
+#endif
     return ret;
 }
 
 int print(const char* str) {
     unsigned len = str_len(str);
     int ret;
+
+#ifdef _WIN32
+    __asm__ volatile (
+        "call WriteFile"
+        : "=a"(ret)
+        : "b"(str), "c"(len), "d"(STDOUT_FILENO)
+        :
+    );
+#else
     asm volatile (
         "syscall"
         : "=a"(ret)
         : "a"(SYS_write), "D"(STDOUT_FILENO), "S"(str), "d"(len)
         : "rcx", "r11", "memory"
     );
+#endif
     return ret;
 }
 
@@ -108,14 +127,24 @@ int fstring(char *str, const char *format, ...) {
 }
 
 void exit_program(int exit_code) {
-    asm volatile(
+#ifdef _WIN32
+    __asm__ volatile (
+        "push %[exit_code]\n\t"
+        "call ExitProcess\n\t"
+        :
+        : [exit_code] "m" (exit_code)
+        : "memory"
+    );
+#else
+    asm volatile (
         "syscall"
         :
         : "a"(SYS_exit), "D"(exit_code)
         : "rcx", "r11"
     );
+#endif
 }
 
 
 
-#endif // CHASM_H
+#endif // __CHASM_H__
